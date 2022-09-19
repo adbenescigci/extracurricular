@@ -1,12 +1,14 @@
 import React from "react";
 import Box from "@mui/material/Box";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
+import Chip from "@mui/material/Chip";
+import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
 
 import { useDispatch } from "react-redux";
+
 import { logout } from "../providers/Redux/slices/authSlice";
+import { stylesHeader } from "./styles";
 
 const Header = ({ user }) => {
   const dispatch = useDispatch();
@@ -15,36 +17,25 @@ const Header = ({ user }) => {
     dispatch(logout());
   };
 
+  const onHandleClick = () => {
+    console.log("handle");
+  };
+
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar sx={{ position: "sticky" }}>
-        <Toolbar
-          sx={{ bgcolor: "white ! important", justifyContent: "space-between" }}
-        >
-          <Typography
-            variant="h5"
-            noWrap
-            component="div"
-            sx={{
-              flexGrow: 1,
-              color: "black",
-              cursor: "pointer",
-              paddingRight: 1,
-              maxWidth: "fit-content",
-              fontWeight: "bold",
-              "&>span": {
-                color: "#A2DA4A",
-                fontStyle: "italic",
-              },
-            }}
-          >
-            Extracurricular<span>Activities</span> {user.firstName}
+    <Box sx={stylesHeader.box}>
+      <Grid sx={stylesHeader.grid} alignItems="center" spacing={1} container>
+        <Grid item xs={7}>
+          <Typography variant="h4" component="h2">
+            Extracurricular
           </Typography>
-          <Button onClick={onLogOut} sx={{ color: "green" }}>
-            LogOut
-          </Button>
-        </Toolbar>
-      </AppBar>
+        </Grid>
+        <Grid item xs={2}>
+          <Chip label={user?.firstName} onClick={onHandleClick} />
+        </Grid>
+        <Grid item xs={3}>
+          <Button onClick={onLogOut}>LogOut</Button>
+        </Grid>
+      </Grid>
     </Box>
   );
 };

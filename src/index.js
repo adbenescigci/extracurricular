@@ -9,8 +9,10 @@ import Program from "./screens/Program";
 import Events from "./screens/Events";
 import Event from "./screens/Event";
 import AddEvent from "./screens/AddEvent";
-import AddProgram from "./screens/AddProgram";
 import NotFound from "./pages/NotFound";
+
+import { ThemeProvider } from "@mui/material/styles";
+import { theme } from "./theme";
 import "./index.css";
 
 import {
@@ -29,7 +31,6 @@ const router = createBrowserRouter(
         <Route path="/programs/:id" element={<Program />} />
         <Route path="/events" element={<Events />} />
         <Route path="/events/:id" element={<Event />} />
-        <Route path="/newProgram" element={<AddProgram />} />
         <Route path="/newEvent" element={<AddEvent />} />
         <Route path="*" element={<NotFound />} />
       </Route>
@@ -41,7 +42,9 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <RouterProvider router={router} />
+      <ThemeProvider theme={theme}>
+        <RouterProvider router={router} />
+      </ThemeProvider>
     </Provider>
   </React.StrictMode>
 );
