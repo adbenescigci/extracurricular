@@ -1,20 +1,13 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useOutletContext } from "react-router-dom";
-import { parseISO, format } from "date-fns";
+import { useDispatch } from "react-redux";
 import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
 import Box from "@mui/material/Box";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemAvatar from "@mui/material/ListItemAvatar";
-import ListItemText from "@mui/material/ListItemText";
-import Avatar from "@mui/material/Avatar";
-import IconButton from "@mui/material/IconButton";
-import FolderIcon from "@mui/icons-material/Folder";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
 import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
+import Contents from "./children/ContentsOfPrograms";
+import AddProgramModal from "./children/AddProgramModal";
+
+import { deleteOne } from "../providers/Redux/slices/authSlice";
 import { addNewProgram, updateProgram, deleteProgram } from "../api/index";
 
 const cardStyles = {
@@ -35,27 +28,25 @@ const cardStyles = {
 };
 
 const Programs = () => {
+  const [open, setOpen] = useState(false);
   const user = useOutletContext();
-  const [programs, setPrograms] = useState([]);
-
-  console.log(user);
-
-  useEffect(() => {
-    if (user.userType === "admin") {
-      fetch(`http://localhost:5000/programs`)
-        .then((response) => response.json())
-        .then(({ programs }) => {
-          setPrograms(programs);
-        })
-        .catch(() => console.log("error"));
-    } else setPrograms(user?.programs);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const dispatch = useDispatch();
 
   const handleDelete = (id) => async () => {
     await deleteProgram(id);
-    const newProgramsList = programs.filter((el) => el.id !== id);
-    setPrograms(newProgramsList);
+    dispatch(deleteOne(id));
+  };
+
+  const onCloseModal = (e, reason) => {
+    setOpen(false);
+  };
+
+  const onOpenModal = (e, reason) => {
+    setOpen(true);
+  };
+
+  const addNewProgram = (program) => {
+    console.log(program);
   };
 
   return (
@@ -72,7 +63,7 @@ const Programs = () => {
         >
           <Button
             variant="outlined"
-            onClick={() => console.log("onClick")}
+            onClick={onOpenModal}
             size="small"
             sx={cardStyles.addNewButton}
           >
@@ -80,55 +71,13 @@ const Programs = () => {
           </Button>
         </Box>
       )}
-      <CardContent sx={{ height: "max-content" }}>
-        <List dense={true}>
-          {programs?.length > 0 ? (
-            programs?.map((el) => (
-              <ListItem
-                key={el.id}
-                secondaryAction={
-                  user.userType === "admin" && (
-                    <>
-                      <IconButton
-                        onClick={() => console.log("edit")}
-                        edge="end"
-                        aria-label="delete"
-                      >
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton
-                        onClick={handleDelete(el.id)}
-                        edge="end"
-                        aria-label="delete"
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </>
-                  )
-                }
-              >
-                <ListItemAvatar>
-                  <Avatar>
-                    <FolderIcon />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText
-                  onClick={() => console.log("item")}
-                  primary={`${el.name} - ${el.abbreviation}`}
-                  secondary={`${format(
-                    parseISO(el.start),
-                    "MM/dd/yyyy"
-                  )} - ${format(parseISO(el.end), "MM/dd/yyyy")}`}
-                />
-              </ListItem>
-            ))
-          ) : (
-            <Typography sx={{ color: "#546e7a" }} align="center">
-              {"There is no program on your list"}
-            </Typography>
-          )}
-        </List>
-      </CardContent>
+      <Contents user={user} handleDelete={handleDelete} />
+      <AddProgramModal
+        user={user}
+        open={open}
+        onClose={onCloseModal}
+        addNewProgram={addNewProgram}
+      />
     </Card>
   );
 };

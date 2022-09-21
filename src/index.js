@@ -5,10 +5,10 @@ import store from "./providers/Redux/store";
 import Login from "./pages/Login";
 import MainPage from "./pages/MainPage";
 import Programs from "./screens/Programs";
-import Program from "./screens/Program";
+import Program from "./screens/children/Program";
 import Events from "./screens/Events";
-import Event from "./screens/Event";
-import AddEvent from "./screens/AddEvent";
+import Event from "./screens/children/Event";
+import AddEvent from "./screens/children/AddEvent";
 import NotFound from "./pages/NotFound";
 
 import { ThemeProvider } from "@mui/material/styles";

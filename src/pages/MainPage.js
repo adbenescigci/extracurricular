@@ -8,6 +8,8 @@ const MainPage = () => {
   let location = useLocation();
   const user = useSelector((state) => state.auth.user);
 
+  console.log(user);
+
   if (!user) {
     return <Navigate to="/" state={{ from: location }} replace />;
   }

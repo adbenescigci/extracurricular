@@ -12,9 +12,14 @@ export const authSlice = createSlice({
     logout: (state) => {
       state.user = "";
     },
+    deleteOne: (state, action) => {
+      state.user.programs = state.user.programs.filter(
+        (el) => el.id !== action.payload
+      );
+    },
   },
 });
 
-export const { login, logout } = authSlice.actions;
+export const { login, logout, deleteOne } = authSlice.actions;
 
 export default authSlice.reducer;
