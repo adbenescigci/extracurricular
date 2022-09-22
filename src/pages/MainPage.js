@@ -8,8 +8,6 @@ const MainPage = () => {
   let location = useLocation();
   const user = useSelector((state) => state.auth.user);
 
-  console.log(user);
-
   if (!user) {
     return <Navigate to="/" state={{ from: location }} replace />;
   }
@@ -32,7 +30,7 @@ const MainPage = () => {
       <Navbar />
       <Box sx={appStyles.row}>
         <Header user={user} />
-        <Outlet context={user} />
+        <Outlet />
       </Box>
     </Box>
   );

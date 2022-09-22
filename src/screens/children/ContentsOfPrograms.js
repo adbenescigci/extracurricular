@@ -9,18 +9,19 @@ import IconButton from "@mui/material/IconButton";
 import FolderIcon from "@mui/icons-material/Folder";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import Typography from "@mui/material/Typography";
 
-const Contents = ({ user, handleDelete }) => {
+const Contents = ({ user, programs, handleDelete, handleClickEnroll }) => {
   return (
     <CardContent sx={{ height: "max-content" }}>
       <List dense={true}>
-        {user?.programs?.length > 0 ? (
-          user?.programs?.map((el) => (
+        {programs?.length > 0 ? (
+          programs?.map((el) => (
             <ListItem
               key={el.id}
               secondaryAction={
-                user?.userType === "admin" && (
+                (user?.userType === "admin" && (
                   <>
                     <IconButton
                       onClick={() => console.log("edit")}
@@ -37,7 +38,18 @@ const Contents = ({ user, handleDelete }) => {
                       <DeleteIcon />
                     </IconButton>
                   </>
-                )
+                )) ||
+                (user?.userType === "teacher" && (
+                  <>
+                    <IconButton
+                      onClick={handleClickEnroll(el)}
+                      edge="end"
+                      aria-label="enroll"
+                    >
+                      <PersonAddIcon />
+                    </IconButton>
+                  </>
+                ))
               }
             >
               <ListItemAvatar>

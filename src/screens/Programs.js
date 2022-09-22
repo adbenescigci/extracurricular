@@ -1,14 +1,17 @@
-import { useState } from "react";
-import { useOutletContext } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Card from "@mui/material/Card";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Contents from "./children/ContentsOfPrograms";
 import AddProgramModal from "./children/AddProgramModal";
-
-import { deleteOne } from "../providers/Redux/slices/authSlice";
+import StudentList from "./children/StudentList";
 import { addNewProgram, updateProgram, deleteProgram } from "../api/index";
+import {
+  fetchData,
+  deleteOne,
+  addOne,
+} from "../providers/Redux/slices/programSlice";
 
 const cardStyles = {
   wrapper: {
@@ -29,24 +32,56 @@ const cardStyles = {
 
 const Programs = () => {
   const [open, setOpen] = useState(false);
-  const user = useOutletContext();
+  const [selectedProgram, setProgram] = useState("");
+  const user = useSelector((state) => state.auth.user);
+  const programs = useSelector((state) => state.program.programs);
   const dispatch = useDispatch();
+
+  //popover
+  const [anchorEl, setAnchorEl] = useState(null);
+  const handleClickEnroll = (el) => (event) => {
+    setProgram(el);
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = (el, reason) => {
+    if (reason === "backdropClick") {
+      return;
+    }
+    setAnchorEl(null);
+    setProgram("");
+  };
+  const openPopover = Boolean(anchorEl);
+  //
+
+  useEffect(() => {
+    fetch(
+      user.userType === "admin"
+        ? "http://localhost:5000/programs"
+        : `http://localhost:5000/programs/enrolled/${user._id}`
+    )
+      .then((response) => response.json())
+      .then((json) => {
+        dispatch(fetchData(json));
+      })
+      .catch(() => console.log("error"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleDelete = (id) => async () => {
     await deleteProgram(id);
     dispatch(deleteOne(id));
   };
 
+  const handleAddProgram = async (program) => {
+    const { result } = await addNewProgram(program);
+    dispatch(addOne(result.data));
+  };
   const onCloseModal = (e, reason) => {
     setOpen(false);
   };
 
   const onOpenModal = (e, reason) => {
     setOpen(true);
-  };
-
-  const addNewProgram = (program) => {
-    console.log(program);
   };
 
   return (
@@ -71,13 +106,31 @@ const Programs = () => {
           </Button>
         </Box>
       )}
-      <Contents user={user} handleDelete={handleDelete} />
-      <AddProgramModal
+      <Contents
         user={user}
-        open={open}
-        onClose={onCloseModal}
-        addNewProgram={addNewProgram}
+        programs={programs}
+        handleClickEnroll={handleClickEnroll}
+        handleDelete={handleDelete}
       />
+      {user.userType === "admin" && (
+        <AddProgramModal
+          user={user}
+          open={open}
+          programs={programs}
+          onClose={onCloseModal}
+          addNewProgram={handleAddProgram}
+        />
+      )}
+      {user.userType === "teacher" && (
+        <StudentList
+          program={selectedProgram}
+          open={openPopover}
+          anchorEl={anchorEl}
+          handleClose={handleClose}
+          students={user.students}
+          dispatch={dispatch}
+        />
+      )}
     </Card>
   );
 };

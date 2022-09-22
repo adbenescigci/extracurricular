@@ -4,10 +4,10 @@ const API = axios.create({ baseURL: "http://localhost:5000/" });
 
 export const addNewProgram = async (newProgram) => {
   try {
-    await API.post("programs", {
+    const result = await API.post("programs", {
       ...newProgram,
     });
-    return { severity: "success", message: "Basariyla eklendi" };
+    return { result, severity: "success", message: "Basariyla eklendi" };
   } catch (error) {
     return { severity: "error", message: error.message };
   }

@@ -16,12 +16,12 @@ import InputLabel from "@mui/material/InputLabel";
 import Controller from "../../common/Controller";
 import { modalStyles } from "../styles";
 
-const AddProgramModal = ({ open, onClose, addNewProgram, user }) => {
+const AddProgramModal = ({ open, onClose, addNewProgram, user, programs }) => {
   const [start, setStart] = useState(null);
   const [end, setEnd] = useState(null);
   const [manager, setManager] = useState([]);
   const [filterManager, setFilterManager] = useState(null);
-  let teachers = user?.users.filter((el) => el.userType === "teacher");
+  let teachers = user?.teachers;
 
   const {
     register,
@@ -50,11 +50,11 @@ const AddProgramModal = ({ open, onClose, addNewProgram, user }) => {
       setManager([]);
       onClose();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formState, reset]);
 
   useEffect(() => {
     const subscription = watch((data) => {
-      console.log(data.director, filterManager);
       if (data.director) {
         setFilterManager(data.director);
       }
@@ -77,10 +77,16 @@ const AddProgramModal = ({ open, onClose, addNewProgram, user }) => {
   };
 
   const addProgram = (data) => {
-    console.log(data);
+    let manager = [];
+    data.manager.forEach((el) => manager.push(el.id));
+    data.director = data.director.id;
+    data.manager = manager;
+    data.abbreviation = data.abbreviation.toUpperCase();
+
     setStart(null);
     setEnd(null);
     setFilterManager(null);
+    addNewProgram(data);
   };
 
   const handleStartDateChange = (value) => {
@@ -144,6 +150,10 @@ const AddProgramModal = ({ open, onClose, addNewProgram, user }) => {
                 value: /^[A-Za-z0-9]*$/,
                 message: "just number & letter",
               },
+              validate: (value) =>
+                programs.filter(
+                  (el) => el.abbreviation.toUpperCase() === value.toUpperCase()
+                ).length === 0 || "already taken",
             })}
             error={errors.abbreviation ? true : false}
             helperText={errors.abbreviation?.message}
@@ -219,7 +229,10 @@ const AddProgramModal = ({ open, onClose, addNewProgram, user }) => {
               value={start}
               minDate={new Date()}
               onChange={handleStartDateChange}
-              renderInput={(params) => <TextField {...params} />}
+              renderInput={(params) => (
+                <TextField error={errors.start ? true : false} {...params} />
+              )}
+              onError={(reason, value) => console.log(reason, value)}
             />
           </Grid>
           <Grid item xs={4} justifyContent="center">
@@ -233,6 +246,7 @@ const AddProgramModal = ({ open, onClose, addNewProgram, user }) => {
               minDate={start}
               onChange={handleEndDateChange}
               renderInput={(params) => <TextField {...params} />}
+              error={errors.end ? true : false}
             />
           </Grid>
         </LocalizationProvider>
@@ -286,7 +300,10 @@ const AddProgramModal = ({ open, onClose, addNewProgram, user }) => {
                 required: true,
               },
               render: (props) => (
-                <FormControl sx={{ width: "100%", maxWidth: "100%" }}>
+                <FormControl
+                  error={errors.manager ? true : false}
+                  sx={{ width: "100%", maxWidth: "100%" }}
+                >
                   <InputLabel id="demo-multiple-select">Manager(s)</InputLabel>
                   <Select
                     {...props}
@@ -302,7 +319,6 @@ const AddProgramModal = ({ open, onClose, addNewProgram, user }) => {
                       );
                       return data.join(", ");
                     }}
-                    error={errors.manager ? true : false}
                   >
                     {teachers
                       .filter((el) => el !== filterManager)
@@ -328,9 +344,7 @@ const AddProgramModal = ({ open, onClose, addNewProgram, user }) => {
           sx={modalStyles.buttons}
         >
           <Grid item xs="auto">
-            <Button disabled={false} onClick={handleSubmit(addProgram)}>
-              Submit
-            </Button>
+            <Button onClick={handleSubmit(addProgram)}>Submit</Button>
           </Grid>
           <Grid item xs="auto">
             <Button onClick={onCloseModal}>Esc</Button>
