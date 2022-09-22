@@ -37,21 +37,16 @@ const Programs = () => {
   const programs = useSelector((state) => state.program.programs);
   const dispatch = useDispatch();
 
-  //popover
   const [anchorEl, setAnchorEl] = useState(null);
   const handleClickEnroll = (el) => (event) => {
     setProgram(el);
     setAnchorEl(event.currentTarget);
   };
   const handleClose = (el, reason) => {
-    if (reason === "backdropClick") {
-      return;
-    }
     setAnchorEl(null);
     setProgram("");
   };
   const openPopover = Boolean(anchorEl);
-  //
 
   useEffect(() => {
     fetch(
@@ -129,6 +124,7 @@ const Programs = () => {
           handleClose={handleClose}
           students={user.students}
           dispatch={dispatch}
+          programs
         />
       )}
     </Card>

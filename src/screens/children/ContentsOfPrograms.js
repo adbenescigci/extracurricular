@@ -24,7 +24,7 @@ const Contents = ({ user, programs, handleDelete, handleClickEnroll }) => {
                 (user?.userType === "admin" && (
                   <>
                     <IconButton
-                      onClick={() => console.log("edit")}
+                      // onClick={() => console.log("edit")}
                       edge="end"
                       aria-label="delete"
                     >
@@ -59,7 +59,7 @@ const Contents = ({ user, programs, handleDelete, handleClickEnroll }) => {
               </ListItemAvatar>
               <ListItemText
                 onClick={() => console.log("item")}
-                primary={`${el.name} - ${el.abbreviation}`}
+                primary={`${el.name} - ${el.abbreviation}  ${el.level}`}
                 secondary={`${format(
                   parseISO(el.start),
                   "MM/dd/yyyy"
