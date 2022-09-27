@@ -42,7 +42,7 @@ const Programs = () => {
     setProgram(el);
     setAnchorEl(event.currentTarget);
   };
-  const handleClose = (el, reason) => {
+  const handleClose = (e, reason) => {
     setAnchorEl(null);
     setProgram("");
   };
@@ -51,8 +51,8 @@ const Programs = () => {
   useEffect(() => {
     fetch(
       user.userType === "admin"
-        ? "http://localhost:5000/programs"
-        : `http://localhost:5000/programs/enrolled/${user._id}`
+        ? "https://school-out-activities.herokuapp.com/programs"
+        : `https://school-out-activities.herokuapp.com/programs/enrolled/${user._id}`
     )
       .then((response) => response.json())
       .then((json) => {

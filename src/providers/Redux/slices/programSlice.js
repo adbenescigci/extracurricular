@@ -13,7 +13,7 @@ export const programSlice = createSlice({
       state.programs = [action.payload, ...state.programs];
     },
 
-    updateOne: (state, { payload }) => {
+    updateEnrolledStudents: (state, { payload }) => {
       state.programs[payload.index].students = payload.students;
     },
 
@@ -23,6 +23,7 @@ export const programSlice = createSlice({
   },
 });
 
-export const { fetchData, deleteOne, addOne, updateOne } = programSlice.actions;
+export const { fetchData, deleteOne, addOne, updateEnrolledStudents } =
+  programSlice.actions;
 
 export default programSlice.reducer;

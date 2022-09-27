@@ -29,6 +29,15 @@ export const theme = createTheme({
         },
       },
     },
+    MuiInput: {
+      styleOverrides: {
+        // Name of the slot
+        root: {
+          // Some CSS
+          //"&>*": { whiteSpace: "pre-line ! important" },
+        },
+      },
+    },
     MuiBox: {
       styleOverrides: {
         padding: "0 !important",

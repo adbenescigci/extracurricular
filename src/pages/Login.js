@@ -21,9 +21,10 @@ const Login = () => {
 
   const onLogIn = () => {
     if (id) {
-      fetch(`http://localhost:5000/users/${id}`)
+      fetch(`https://school-out-activities.herokuapp.com/users/${id}`)
         .then((response) => response.json())
         .then((json) => {
+          console.log(json);
           dispatch(login(json));
         })
         .catch(() => console.log("error"));
